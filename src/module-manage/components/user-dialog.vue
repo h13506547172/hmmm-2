@@ -98,12 +98,11 @@ export default {
 
   methods: {
     async onSave() {
-      // console.log(this.rowId);
-      this.form.id = this.rowList.id;
-      this.form.permission_group_id = this.rowList.permission_group_id;
       await this.$refs.form.validate();
       if (this.title === "创建用户") {
-        const res = await add(this.form);
+        console.log(this.form);
+        this.form.sex = 1;
+        await add(this.form);
 
         this.$message.success("新增成功");
         this.onClose();
@@ -111,6 +110,10 @@ export default {
       } else {
         // id
         // 请求
+        // 修改功能所需数据
+        // console.log(this.rowId);
+        this.form.id = this.rowList.id;
+        this.form.permission_group_id = this.rowList.permission_group_id;
         const res = await update(this.form);
         console.log(res);
         this.$message.success("新增成功");

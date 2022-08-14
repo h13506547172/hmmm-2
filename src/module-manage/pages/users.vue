@@ -36,7 +36,7 @@
       style="width: 100%"
       :header-cell-style="styleFunc"
     >
-      <el-table-column type="index" label="序号" width="180"> </el-table-column>
+      <el-table-column prop="id" label="序号" width="180"> </el-table-column>
       <el-table-column prop="email" label="邮箱" width="180"> </el-table-column>
       <el-table-column prop="phone" label="联系电话"> </el-table-column>
       <el-table-column prop="username" label="用户名"> </el-table-column>
@@ -52,13 +52,14 @@
             icon="el-icon-edit"
             @click="reverse(scope.row)"
           ></el-button>
-          <!-- <el-button
+          <el-button
             type="danger"
             plain
             circle
             icon="el-icon-delete"
             @click="deleteFn(scope.row)"
-          ></el-button> -->
+            v-if="scope.row.id !== 2"
+          ></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,7 +97,7 @@
 </template>
 
 <script>
-import { list } from "@/api/base/users";
+import { list, remove } from "@/api/base/users";
 // 权限组简单列表
 import { simple } from "@/api/base/permissions";
 import pageTool from "../components/page-tool.vue";
@@ -194,14 +195,15 @@ export default {
         username: val.username,
       };
     },
-    // 删除
-    // async deleteFn(val) {
-    //   console.log(val.id);
-    //   try {
-    //     const res = await remove(val.id);
-    //     console.log(res);
-    //   } catch (e) {}
-    // },
+    // 删除用户
+    async deleteFn(val) {
+      // console.log(val.id);
+      try {
+        const res = await remove({ id: val.id });
+        // console.log(res);
+        this.getList();
+      } catch (e) {}
+    },
   },
 };
 </script>
