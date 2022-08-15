@@ -27,5 +27,6 @@ export default {
   top: 75px;
   padding: 20px;
   // z-index: 0;
+  padding: 20px;
 }
 </style>
