@@ -229,10 +229,12 @@ export default {
       if (this.title == "创建菜单") {
         await add(this.formPoints);
         this.closeFn();
+        this.$message.success("创建成功~");
         this.$emit("loadList");
       } else {
         await update(this.formPoints);
         this.closeFn();
+        this.$message.success("修改成功~");
         this.$emit("loadList");
       }
     },
