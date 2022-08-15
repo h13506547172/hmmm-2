@@ -30,26 +30,25 @@
           <template v-slot="{ row }">
             <i v-if="row.is_point" class="el-icon-view"></i>
             <i v-else :class="classMy(row)"></i>
-
             {{ row.title }}
           </template>
         </el-table-column>
         <el-table-column prop="code" label="权限点代码"> </el-table-column>
         <el-table-column prop="address" label="操作" width="150">
-          <template>
+          <template v-slot="{ row, column }">
             <el-button
               type="primary"
               icon="el-icon-edit"
               circle
               plain
-              @click="editBtn"
+              @click="editBtn(row, column)"
             ></el-button>
             <el-button
               type="danger"
               icon="el-icon-delete"
               circle
               plain
-              @click="delBtn"
+              @click="delBtn(row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -59,12 +58,13 @@
       :dialogVisible.sync="dialogVisible"
       :list="selectList"
       @loadList="getList"
+      ref="myAddPoints"
     />
   </div>
 </template>
 
 <script>
-import { list } from "@/api/base/menus";
+import { list, remove } from "@/api/base/menus";
 import myAddPoints from "../components/myAddPoints.vue";
 
 export default {
@@ -84,6 +84,10 @@ export default {
   },
 
   created() {
+    this.$message({
+      type: "success",
+      message: "杨博制作，程序和我有一个能跑就行！",
+    });
     //获取列表
     this.getList();
   },
@@ -104,6 +108,7 @@ export default {
 
     //添加按钮
     addMenusFn() {
+      this.$refs.myAddPoints.title = "创建菜单";
       this.dialogVisible = true;
     },
     //获取列表
@@ -111,15 +116,39 @@ export default {
       this.tbLoading = true;
       let { data } = await list();
       //将所有points替换为childs
-      this.selectList = [{ id: 0, title: "主导航" }, ...data];
+      let copyObj = JSON.parse(JSON.stringify(data));
+      this.selectList = [{ id: 0, title: "主导航" }, ...copyObj];
       let res = this.pointsTochilds(data);
       this.tableData = res;
       this.tbLoading = false;
     },
     //修改按钮
-    editBtn() {},
+    editBtn(row, column) {
+      this.$refs.myAddPoints.resetDate(row, column, this.tableData);
+      this.dialogVisible = true;
+    },
     //删除按钮
-    delBtn() {},
+    delBtn(row) {
+      this.$confirm("此操作将永久删除用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          await remove(row);
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+          this.getList();
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
     //递归处理树状结构
     pointsTochilds(data) {
       let arr = [];

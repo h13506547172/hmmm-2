@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="创建菜单"
+    :title="title"
     :visible="dialogVisible"
     width="50%"
     @close="closeFn"
@@ -8,21 +8,26 @@
     <el-form ref="formM" :rules="rules" :model="formPoints" label-width="220px">
       <el-form-item label="权限组名称">
         <el-radio-group v-model="formPoints.is_point">
-          <el-radio :label="false">菜单</el-radio>
-          <el-radio :label="true">权限点</el-radio>
+          <el-radio :label="false" :disabled="title !== '创建菜单'"
+            >菜单</el-radio
+          >
+          <el-radio :label="true" :disabled="title !== '创建菜单'"
+            >权限点</el-radio
+          >
         </el-radio-group>
       </el-form-item>
       <el-form-item label="权限组名称">
         <el-select
           ref="mySelect"
-          v-model="formPoints.pidName"
+          v-model="pidName"
           placeholder="请选择活动区域"
           popper-class="popperClass"
+          @focus="focus"
         >
           <el-option :value="pidValue" class="treeOptin">
             <el-tree
               :expand-on-click-node="false"
-              :default-expanded-keys="TreeArr"
+              default-expand-all
               :data="selectList"
               :props="treeProps"
               @node-click="handleNodeClick"
@@ -49,7 +54,7 @@
 </template>
 
 <script>
-import { add } from "@/api/base/menus";
+import { add, update } from "@/api/base/menus";
 export default {
   name: "myAddPoints",
   props: {
@@ -72,15 +77,15 @@ export default {
   },
   data() {
     return {
-      TreeArr: [],
+      title: "创建菜单", //标题
       //表单
       formPoints: {
         is_point: false, //是否是权限点
         pid: 0, //选择pid
         code: "", //权限代码
         title: "", //权限标题
-        pidName: "主导航",
       },
+      pidName: "主导航",
       //校验规则
       rules: {
         code: [{ required: true, message: "代码不能为空", trigger: "blur" }],
@@ -99,6 +104,55 @@ export default {
   created() {},
 
   methods: {
+    //递归搜索pid
+    findPid(arr, pid) {
+      return arr.find((item) => {
+        if (item.id == pid) {
+          return item;
+        } else if (item.childs) {
+          return this.findPid(item.childs, pid);
+        } else if (item.points) {
+          return this.findPid(item.points, pid);
+        }
+      });
+    },
+    //父页面传来的修改title并且数据回显
+    resetDate(row, column, arr) {
+      this.title = "修改菜单";
+      const isPoint = row.is_point ? true : false;
+      const pidDate = row.pid ? row.pid : 0;
+      this.$nextTick(() => {
+        //数据回显
+        this.formPoints = {
+          is_point: isPoint, //是否是权限点
+          pid: pidDate, //选择pid
+          code: row.code, //权限代码
+          title: row.title, //权限标题
+          id: row.id,
+        };
+        if (row.pid == null) {
+          this.pidName = "主导航";
+          return;
+        }
+        //由于无法回显pid的title所以从原数组寻找title回显
+        const resetPid = this.findPid(arr, row.pid);
+        this.pidName = resetPid.title;
+      });
+    },
+    //下拉框获得焦点时
+    focus() {
+      if (this.formPoints.is_point) {
+        let allNode = document.querySelectorAll(".custom-tree-node-none");
+        allNode.forEach((item) => {
+          item.parentNode.classList.add("cursorNone");
+        });
+      } else {
+        let allNode = document.querySelectorAll(".custom-tree-node");
+        allNode.forEach((item) => {
+          item.parentNode.classList.remove("cursorNone");
+        });
+      }
+    },
     //自定义树形
     renderContent(h, { node, data, store }) {
       if (data.id == 0) {
@@ -136,25 +190,33 @@ export default {
             <span>{node.label}</span>
           </span>
         );
+      } else {
+        return (
+          <span class="custom-tree-node">
+            <span>{node.label}</span>
+          </span>
+        );
       }
     },
     //点击树图
     handleNodeClick(val) {
       if (this.formPoints.is_point) {
         if (val.childs && !val.points) return;
-        console.log(val);
         this.formPoints.pid = val.id;
-        this.formPoints.pidName = val.title;
+        this.pidName = val.title;
         this.$refs.mySelect.blur();
       } else {
-        console.log(val);
         this.formPoints.pid = val.id;
-        this.formPoints.pidName = val.title;
+        this.pidName = val.title;
         this.$refs.mySelect.blur();
       }
     },
     //关闭窗口时~
     closeFn() {
+      //关闭时重置数据
+      this.$refs.formM.resetFields();
+      this.formPoints.is_point = false;
+      this.pidName = "主导航";
       this.$emit("update:dialogVisible", false);
     },
     //确认窗口时~
@@ -164,9 +226,15 @@ export default {
     },
     //添加菜单
     async add() {
-      await add(this.formPoints);
-      this.closeFn();
-      this.$emit("loadList");
+      if (this.title == "创建菜单") {
+        await add(this.formPoints);
+        this.closeFn();
+        this.$emit("loadList");
+      } else {
+        await update(this.formPoints);
+        this.closeFn();
+        this.$emit("loadList");
+      }
     },
   },
 };
@@ -204,6 +272,9 @@ export default {
   .el-input {
     width: 50%;
   }
+}
+/deep/.cursorNone {
+  cursor: not-allowed;
 }
 </style>
 <style>
