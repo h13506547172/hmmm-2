@@ -3,7 +3,7 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>{{
-          $route.params.id ? "试题修改金哲豪" : "试题录入金哲豪"
+          $route.query?.id ? "试题修改金哲豪" : "试题录入金哲豪"
         }}</span>
       </div>
       <div class="main">
@@ -156,7 +156,10 @@ import { simple } from "@/api/hmmm/subjects";
 import { list as getCompanysListAPI } from "@/api/hmmm/companys";
 import { simple as getdirectorysListAPI } from "@/api/hmmm/directorys";
 import { simple as getTagsListAPI } from "@/api/hmmm/tags";
-import { add as addQuestionAPI } from "@/api/hmmm/questions";
+import {
+  add as addQuestionAPI,
+  detail as getSubjectDetail,
+} from "@/api/hmmm/questions";
 
 export default {
   name: "questionsNew",
@@ -226,7 +229,6 @@ export default {
         question: [{ required: true, message: "请填写", trigger: "blur" }],
         answer: [{ required: true, message: "请填写", trigger: "blur" }],
         tags: [{ required: true, message: "请填写", trigger: "blur" }],
-
       },
       datas, // 城市数据
       simpleList: [], //学科简单列表
@@ -236,8 +238,14 @@ export default {
     };
   },
   async created() {
-    this.getSimpleList();
-    this.getCompanysList();
+    await this.getSimpleList();
+    await this.getCompanysList();
+    if (this.$route.query.id) {
+      console.log(this.$route.query.id);
+      const res = await getSubjectDetail({ id: 21 });
+      // console.log(res);
+      this.formData = res.data;
+    }
   },
   methods: {
     // 单选选中题目
@@ -278,9 +286,14 @@ export default {
     async confirmFn() {
       await this.$refs.form.validate();
       // console.log(this.formData);
-      this.formData.tags = this.formData.tags.join(',');
-      await addQuestionAPI(this.formData)
-      this.$messages.success('添加题目成功')
+      this.formData.tags = this.formData.tags.join(",");
+      await addQuestionAPI(this.formData);
+      if (this.$route.query.id) {
+        this.$router.back();
+      } else {
+        this.$router.push("/questions/list");
+      }
+      this.$messages.success("添加题目成功");
     },
   },
   watch: {

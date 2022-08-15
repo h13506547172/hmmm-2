@@ -1,46 +1,27 @@
 <template>
   <div>
     <div v-if="questionType == 1">
-      <div v-for="(item, index) in options" :key="item.title" class="option">
+      <div v-for="(item, index) in options" :key="item.code" class="option">
         <el-radio
           v-model="item.isRight"
           :label="true"
           @change="passRadioFn($event, index)"
         >
-          <span>{{ item.title }}:</span>
-          <el-input v-model="item.code" placeholder="请输入内容"></el-input>
-          <i class="el-icon-circle-close"></i>
+          <span>{{ item.code }}:</span>
+          <el-input v-model="item.title" placeholder="请输入内容"></el-input>
+          <i class="el-icon-circle-close" @click="item.img = ''"></i>
         </el-radio>
-
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <i v-else class="avatar-uploader-icon"><span>上传图片</span></i>
-        </el-upload>
+        <uploadImg :obj="item"></uploadImg>
       </div>
     </div>
     <div v-if="questionType == 2">
-      <div v-for="item in options" :key="item.title" class="option">
+      <div v-for="item in options" :key="item.code" class="option">
         <el-checkbox v-model="item.isRight" :label="true" class="checkbox">
-          <span>{{ item.title }}:</span>
-          <el-input v-model="item.code" placeholder="请输入内容"></el-input>
-          <i class="el-icon-circle-close"></i>
+          <span>{{ item.code }}:</span>
+          <el-input v-model="item.title" placeholder="请输入内容"></el-input>
+          <i class="el-icon-circle-close" @click="item.img = ''"></i>
         </el-checkbox>
-
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :auto-upload="false"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <i v-else class="avatar-uploader-icon"><span>上传图片</span></i>
-        </el-upload>
+        <uploadImg :obj="item"></uploadImg>
       </div>
     </div>
 
@@ -51,7 +32,12 @@
 </template>
 
 <script>
+import uploadImg from "./uploadImg.vue";
 export default {
+  name: "newOptions",
+  components: {
+    uploadImg,
+  },
   props: {
     options: {
       type: Array,
@@ -64,7 +50,6 @@ export default {
   },
   data() {
     return {
-      imageUrl: "",
       xArr: [
         "a",
         "b",
@@ -102,20 +87,16 @@ export default {
     passRadioFn(val, index) {
       this.$emit("radio", index);
     },
-    // 上传图片
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
     addOptions() {
       if (this.options.length === 26) return;
       const zimu = this.xArr[this.options.length].toUpperCase();
       let newOption = {
-        code: "", //
-        title: "", // ABCD
+        code: "", // ABCD
+        title: "", // 
         img: "",
         isRight: false,
       };
-      newOption.title = zimu;
+      newOption.code = zimu;
       this.$emit("addOption", newOption);
     },
   },
