@@ -62,7 +62,7 @@ export default {
   watch: {
     text(val) {
       this.content = val;
-      console.log(val);
+      // console.log(val);
     },
   },
 };

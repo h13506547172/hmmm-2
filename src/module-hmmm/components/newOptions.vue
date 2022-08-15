@@ -9,7 +9,9 @@
         >
           <span>{{ item.title }}:</span>
           <el-input v-model="item.code" placeholder="请输入内容"></el-input>
+          <i class="el-icon-circle-close"></i>
         </el-radio>
+
         <el-upload
           class="avatar-uploader"
           action="https://jsonplaceholder.typicode.com/posts/"
@@ -17,7 +19,7 @@
           :on-success="handleAvatarSuccess"
         >
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <i v-else class="avatar-uploader-icon">上传图片</i>
+          <i v-else class="avatar-uploader-icon"><span>上传图片</span></i>
         </el-upload>
       </div>
     </div>
@@ -26,7 +28,9 @@
         <el-checkbox v-model="item.isRight" :label="true" class="checkbox">
           <span>{{ item.title }}:</span>
           <el-input v-model="item.code" placeholder="请输入内容"></el-input>
+          <i class="el-icon-circle-close"></i>
         </el-checkbox>
+
         <el-upload
           class="avatar-uploader"
           action="https://jsonplaceholder.typicode.com/posts/"
@@ -35,9 +39,7 @@
           :auto-upload="false"
         >
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <i v-else class="avatar-uploader-icon"
-            ><i class="el-icon-circle-close"></i><span>上传图片</span></i
-          >
+          <i v-else class="avatar-uploader-icon"><span>上传图片</span></i>
         </el-upload>
       </div>
     </div>
@@ -146,6 +148,7 @@ export default {
   border-color: #409eff;
 }
 .avatar-uploader-icon {
+  position: relative;
   display: block;
   font-size: 14px;
   color: #8c939d;
@@ -159,5 +162,11 @@ export default {
   height: 60px;
   line-height: 60px;
   display: block;
+}
+.el-icon-circle-close {
+  z-index: 999;
+  position: absolute;
+  top: -23px;
+  right: -160px;
 }
 </style>
