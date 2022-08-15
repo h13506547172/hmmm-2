@@ -10,21 +10,22 @@
 
 <script>
 export default {
-  name: 'layoutAppMain',
+  name: "layoutAppMain",
   computed: {
-    cachedViews () {
-      return this.$store.state.tagsView.cachedViews
-    }
+    cachedViews() {
+      return this.$store.state.tagsView.cachedViews;
+    },
     // key() {
     //   return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date()
     // }
-  }
-}
+  },
+};
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-.app-main{
+.app-main {
   position: relative;
   top: 75px;
+  padding: 20px;
   // z-index: 0;
 }
 </style>
