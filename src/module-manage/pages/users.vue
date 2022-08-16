@@ -79,10 +79,11 @@
       </el-pagination>
     </div> -->
     <pageTool
-      :pageChange="pageChange"
-      :pageSizeChange="pageSizeChange"
+      :paginationPage="pageChange"
+      :paginationPagesize="pageSizeChange"
       :total="total"
-      :paginationPagesize="pagesize"
+      @pageChange="pageChange"
+      @pageSizeChange="pageSizeChange"
     ></pageTool>
     <!-- 弹框 -->
     <userAdd
@@ -138,23 +139,23 @@ export default {
     // 获取初始列表
     async getList() {
       const res = await list({
-        page: 1,
-        pagesize: 10,
+        page: this.page,
+        pagesize: this.pagesize,
         username: this.username,
       });
       console.log(res);
       // 初始化列表-父组件
       this.tableData = res.data.list;
       console.log(res);
-      this.pagesize = res.data.pagesize * 1;
+      // this.pagesize = res.data.pagesize * 1;
       this.total = res.data.counts;
     },
     //搜索数据
     async searchList() {
       try {
         const res = await list({
-          page: 1,
-          pagesize: 10,
+          page: this.page,
+          pagesize: this.pagesize,
           username: this.username,
         });
         this.tableData = res.data.list;
@@ -168,7 +169,7 @@ export default {
       this.getList();
     },
     pageSizeChange(val) {
-      this.pageSize = val;
+      this.pagesize = val;
       this.getList();
     },
     // 点击新增，获取权限数据
