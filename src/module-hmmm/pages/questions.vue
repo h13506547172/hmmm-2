@@ -343,6 +343,8 @@ export default {
       const res = await list({
         subjectID: this.form.subject || "",
         keyword: this.form.keywords || "",
+        difficulty: this.form.difficulty || "",
+        questionType: this.form.type || "",
         page: this.page,
         pagesize: this.pagesize,
       });
