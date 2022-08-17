@@ -165,6 +165,11 @@ export function toThousandslsFilter(num) {
 export function formatTimeFromMia(val) {
   return dayjs(val).format("YYYY-MM-DD");
 }
+// 显示小时
+export function formatTime11(val) {
+  return dayjs(val).format("YYYY-MM-DD HH:mm:ss");
+}
+
 export function formatTimeFromMia2(val) {
   return dayjs(val).format("YYYY-MM-DD hh:mm:ss");
 }

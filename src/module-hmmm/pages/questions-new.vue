@@ -188,26 +188,26 @@ export default {
         question: "",
         options: [
           {
-            code: "", //
-            title: "A", // ABCD
+            code: "A", //
+            title: "", // ABCD
             img: "",
             isRight: false,
           },
           {
-            code: "", //
-            title: "B", // ABCD
+            code: "B", //
+            title: "", // ABCD
             img: "",
             isRight: false,
           },
           {
-            code: "", //
-            title: "C", // ABCD
+            code: "C", //
+            title: "", // ABCD
             img: "",
             isRight: false,
           },
           {
-            code: "", //
-            title: "D", // ABCD
+            code: "D", //
+            title: "", // ABCD
             img: "",
             isRight: false,
           },
