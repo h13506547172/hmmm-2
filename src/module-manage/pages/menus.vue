@@ -84,10 +84,7 @@ export default {
   },
 
   created() {
-    this.$message({
-      type: "success",
-      message: "杨博制作，程序和我有一个能跑就行！",
-    });
+    this.$message.success("杨博制作，程序和我有一个能跑就行！");
     //获取列表
     this.getList();
   },
@@ -129,7 +126,7 @@ export default {
     },
     //删除按钮
     delBtn(row) {
-      this.$confirm("此操作将永久删除用户, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

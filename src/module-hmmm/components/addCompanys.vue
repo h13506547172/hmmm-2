@@ -1,207 +1,103 @@
 <template>
-  <el-card class="box-card">
-    <el-row type="flex" class="header">
-      <el-col>
-        <el-row type="flex">
-          <el-col>
-            <el-row type="flex" align="middle">
-              <span class="label">标签名称 </span>
-              <el-input v-model="form.tags" placeholder="请输入"></el-input>
-            </el-row>
-          </el-col>
-          <el-col>
-            <el-row type="flex" align="middle">
-              <span class="label">城市 </span>
-              <el-select
-                v-model="form.province"
-                placeholder="请选择"
-                @change="provinceChange"
-              >
-                <el-option
-                  v-for="(item, key) in provinceOptions"
-                  :label="item"
-                  :value="item"
-                  :key="key"
-                >
-                </el-option>
-              </el-select>
-            </el-row>
-          </el-col>
-          <el-col>
-            <el-row type="flex" align="middle">
-              <span class="label">地区 </span>
+  <el-dialog
+    :title="bigTitle"
+    :visible="dialogVisible"
+    width="50%"
+    @close="closeFn"
+  >
+    <!-- 表单 -->
+    <el-form ref="myForm" :model="myForm" label-width="220px" :rules="rules">
+      <el-form-item label="企业名称" class="input50" prop="shortName">
+        <el-input v-model="myForm.shortName"></el-input>
+      </el-form-item>
+      <el-form-item label="所属公司" class="input50" prop="company">
+        <el-input v-model="myForm.company"></el-input>
+      </el-form-item>
+      <el-form-item>
+        https://www.tianyancha.com （在此可查询所属公司全称及简称）
+      </el-form-item>
 
-              <el-select v-model="form.city" placeholder="请选择">
-                <el-option
-                  v-for="(item, key) in cityOptions"
-                  :label="item"
-                  :value="item"
-                  :key="key"
-                >
-                </el-option>
-              </el-select>
-            </el-row>
-          </el-col>
-          <el-col>
-            <el-row type="flex" align="middle">
-              <span class="label">企业简称 </span>
-              <el-input v-model="form.shortName"></el-input>
-            </el-row>
-          </el-col>
-        </el-row>
-      </el-col>
-    </el-row>
-    <el-row type="flex" justify="flex">
-      <el-col>
-        <el-row type="flex" align="middle">
-          <span class="label">状态 </span>
-
-          <el-select
-            v-model="form.state"
-            placeholder="请选择"
-            @change="provinceChange"
-          >
-            <el-option label="启用" :value="1"></el-option>
-            <el-option label="禁用" :value="0"></el-option>
-          </el-select>
-        </el-row>
-      </el-col>
-      <el-col>
-        <el-row>
-          <span class="label"></span>
-          <el-button size="small" @click="clearBtn">清除</el-button>
-          <el-button type="primary" size="small" @click="searchBtn"
-            >搜索</el-button
-          >
-        </el-row>
-      </el-col>
-      <el-col></el-col>
-
-      <el-col>
-        <el-row type="flex" justify="end">
-          <el-button
-            type="success"
-            icon="el-icon-edit"
-            class="addMenus"
-            size="small"
-            @click="addConpanysBtn"
-            >新增用户
-          </el-button></el-row
+      <el-form-item label="城市地区" class="input50" prop="province">
+        <el-select
+          v-model="myForm.province"
+          placeholder="请选择"
+          @change="provinceChange"
         >
-      </el-col>
-    </el-row>
-    <el-alert
-      class="title"
-      :title="`共 ${counts} 条记录`"
-      type="info"
-      show-icon
-      :closable="false"
-    >
-    </el-alert>
-
-    <!-- 表格 -->
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-      :header-cell-style="{
-        background: 'rgb(250,250,250)',
-        color: '#909399',
-      }"
-    >
-      <el-table-column prop="id" label="序号" align="center"> </el-table-column>
-      <el-table-column prop="number" label="企业编号" align="center">
-      </el-table-column>
-      <el-table-column prop="shortName" label="企业简称" align="center">
-      </el-table-column>
-      <el-table-column prop="tags" label="标签" align="center">
-      </el-table-column>
-      <el-table-column prop="creatorID" label="创建者" align="center">
-      </el-table-column>
-      <el-table-column prop="addDate" label="创建日期" align="center">
-        <template v-slot="{ row }">
-          {{ row.addDate | formatTimeFromMia2 }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="remarks" label="备注" align="center">
-      </el-table-column>
-      <el-table-column prop="state" label="状态" align="center">
-        <template v-slot="{ row }">
-          {{ row.state ? "启用" : "禁用" }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="操作" width="180" align="center">
-        <template v-slot="{ row }">
-          <el-button
-            type="primary"
-            icon="el-icon-edit"
-            circle
-            plain
-            @click="editBtn(row)"
-          ></el-button>
-          <el-button
-            :type="row.state ? 'warning' : 'success'"
-            :icon="row.state ? 'el-icon-close' : 'el-icon-check'"
-            circle
-            plain
-            @click="noneUseBtn(row)"
-          ></el-button>
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            circle
-            plain
-            @click="delBtn(row)"
-          ></el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-row type="flex" justify="end">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        background
-        :page-sizes="[10, 20, 30, 50]"
-        layout="prev, pager, next,sizes,jumper"
-        :total="counts"
-      >
-      </el-pagination>
-    </el-row>
-    <addPermissions
-      ref="addPermissions"
-      :dialogVisible.sync="dialogVisible"
-      @renderList="getlist"
-    />
-  </el-card>
+          <el-option
+            v-for="(item, key) in provinceOptions"
+            :label="item"
+            :value="item"
+            :key="key"
+          >
+          </el-option>
+        </el-select>
+        <el-select v-model="myForm.city" placeholder="请选择">
+          <el-option
+            v-for="(item, key) in cityOptions"
+            :label="item"
+            :value="item"
+            :key="key"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="方向（企业标签）" class="input50" prop="tags">
+        <el-input v-model="myForm.tags"></el-input>
+      </el-form-item>
+      <el-form-item label="备注" class="input50" prop="remarks">
+        <el-input
+          v-model="myForm.remarks"
+          type="textarea"
+          style="width: 70%"
+        ></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="$emit('update:dialogVisible', false)">取 消</el-button>
+      <el-button type="primary" @click="onCon">确 定</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>
-import { list, remove, disabled } from "@/api/hmmm/companys";
-import addPermissions from "../components/addCompanys.vue";
-
+import { add, update } from "@/api/hmmm/companys";
 export default {
-  name: "companys",
-  components: {
-    addPermissions,
+  name: "addCompanys",
+  props: {
+    //控制弹窗开关
+    dialogVisible: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
-      counts: 0, //提示有多少条记录
-      form: {
-        tags: "",
+      //标题
+      bigTitle: "创建用户",
+      //表单
+      myForm: {
+        shortName: "",
+        company: "",
         province: "",
         city: "",
-        shortName: "",
-        state: "",
+        tags: "",
+        remarks: "",
+        isFamous: true,
       },
-
-      //表格数据
-      tableData: [],
-      send: {
-        page: 1, //当前页码
-        pagesize: 10, //展示几行数据
+      //表单校验规则
+      rules: {
+        shortName: [
+          { required: true, message: "企业简称不能为空", trigger: "blur" },
+        ],
+        company: [
+          { required: true, message: "所属公司不能为空", trigger: "blur" },
+        ],
+        province: [
+          { required: true, message: "请选择省份", trigger: "change" },
+        ],
+        tags: [{ required: true, message: "请输入标签", trigger: "blur" }],
+        remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }],
       },
-      dialogVisible: false, //控制弹窗开关
       provinceOptions: {
         44: "广东",
         11: "北京",
@@ -797,11 +693,7 @@ export default {
     };
   },
 
-  created() {
-    this.$message.success("杨博制作，程序和我有一个能跑就行！");
-    //获取列表
-    this.getlist();
-  },
+  created() {},
 
   methods: {
     //选中城市后
@@ -809,147 +701,49 @@ export default {
       for (let key in this.provinceOptions) {
         if (this.provinceOptions[key] == val) {
           this.cityOptions = this.city[key];
+          this.myForm.city = this.city[key][1];
         }
       }
     },
-    //点击跳页后
-    handleCurrentChange(val) {
-      this.send.page = val;
-      this.getlist();
+    //弹窗关闭时
+    async closeFn() {
+      this.$refs.myForm.resetFields();
+      await this.$emit("update:dialogVisible", false);
+      this.cityOptions = {};
     },
-    //点击选择页面行数
-    handleSizeChange(val) {
-      this.send.pagesize = val;
-      this.getlist();
-    },
-    //获取表单数据
-    async getlist() {
-      const { data } = await list(this.send);
-      this.counts = data.counts;
-      this.tableData = data.items;
-    },
-    //点击【表格内】修改按钮
-    editBtn(row) {
-      //弹出弹出框
-      this.dialogVisible = true;
-      this.$nextTick(() => {
-        this.$refs.addPermissions.$refs.myForm.resetFields();
-      });
-      this.$refs.addPermissions.bigTitle = "编辑用户";
-      this.$refs.addPermissions.myForm.city = "";
-      this.$refs.addPermissions.editWay(row);
-    },
-    //点击【表格内】禁用按钮
-    noneUseBtn(row) {
-      this.$confirm(`将${row.state ? "禁用" : "启用"}状态, 是否继续?`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(async () => {
-          if (row.state) {
-            await disabled({ id: row.id, state: 0 });
-          } else {
-            await disabled({ id: row.id, state: 1 });
-          }
-          this.$message({
-            type: "success",
-            message: "操作成功!",
-          });
-          this.getlist();
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消操作",
-          });
-        });
-    },
-    //点击【表格内】删除按钮
-    async delBtn(row) {
-      this.$confirm("此操作将永久删除用户, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(async () => {
-          await remove(row);
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
-          this.getlist();
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
-    },
-    //添加权限按钮
-    addConpanysBtn() {
-      //获取树形列表
-      this.dialogVisible = true;
-      this.$nextTick(() => {
-        this.$refs.addPermissions.$refs.myForm.resetFields();
-      });
-      this.$refs.addPermissions.bigTitle = "创建用户";
-      this.$refs.addPermissions.myForm.city = "";
-    },
-    //清理按钮
-    clearBtn() {
-      this.form = {
-        tags: "",
-        province: "",
-        city: "",
-        shortName: "",
-        state: "",
-      };
-      this.send = {
-        page: 1, //当前页码
-        pagesize: 10, //展示几行数据
-      };
-      this.getlist();
-    },
-    //搜索按钮
-    searchBtn() {
-      this.form.tags = this.form.tags.trim();
-      this.form.shortName = this.form.shortName.trim();
-      this.send = {
-        ...this.send,
-        tags: this.form.tags,
-        province: this.form.province,
-        city: this.form.city,
-        shortName: this.form.shortName,
-      };
-      if (this.form.state !== "") {
-        this.send.state = this.form.state;
+    //弹窗点击确认后！
+    async onCon() {
+      await this.$refs.myForm.validate();
+      if (this.bigTitle == "创建用户") {
+        await add(this.myForm);
+        this.$message.success("创建成功！");
+        await this.$emit("update:dialogVisible", false);
+        this.$emit("renderList");
+      } else {
+        await update(this.myForm);
+        this.$message.success("编辑成功！");
+        await this.$emit("update:dialogVisible", false);
+        this.$emit("renderList");
       }
-      this.getlist();
+    },
+
+    //点击编辑按钮后调用的函数
+    async editWay(row) {
+      let isFamous = row.isFamous ? true : false;
+      this.$nextTick(() => {
+        this.myForm = row;
+        this.myForm.isFamous = isFamous;
+        this.provinceChange(row.province);
+      });
     },
   },
 };
 </script>
 
 <style scoped lang="less">
-.el-input--medium {
-  width: 100%;
-  margin-right: 10px;
-}
-.title {
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-.label {
-  width: 80px;
-  font-size: 14px;
-  color: #606266;
-  font-weight: 700;
-  text-align: right;
-  margin-right: 10px;
-}
-.header {
-  margin-bottom: 16px;
+/deep/.input50 {
+  .el-input {
+    width: 70%;
+  }
 }
 </style>

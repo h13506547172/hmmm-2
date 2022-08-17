@@ -165,3 +165,6 @@ export function toThousandslsFilter(num) {
 export function formatTimeFromMia(val) {
   return dayjs(val).format("YYYY-MM-DD");
 }
+export function formatTimeFromMia2(val) {
+  return dayjs(val).format("YYYY-MM-DD hh:mm:ss");
+}
