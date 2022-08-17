@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="12"
         ><el-form label-width="80px">
-          <el-form-item label="关键字" class="search">
+          <el-form-item label="关键字金哲豪" class="search">
             <el-input v-model="form.id" placeholder="根据编号搜索"></el-input>
           </el-form-item>
         </el-form>
