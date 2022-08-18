@@ -2,12 +2,13 @@
   <el-card class="box-card">
     <el-row type="flex" style="margin-bottom: 15px">
       <el-col>
-        <el-alert title="说明：目前支持学科和关键字条件筛选" type="success">
+        <el-alert title="说明：目前支持各条件筛选---刘爱莹制作" type="success">
         </el-alert
       ></el-col>
       <el-col>
         <el-row type="flex" justify="end">
           <el-button
+            style="width: 100px"
             type="success"
             icon="el-icon-edit"
             @click="$router.push('/questions/new')"
@@ -428,13 +429,13 @@ export default {
     async questionsPreview(id) {
       this.questionsPreviewDialogVisible = true;
       const res = await detail({ id: id });
-      console.log(res);
+      // console.log(res);
       this.detailDialogList = res.data;
     },
 
     // 基础题库删除
     async onRemove(row) {
-      console.log(row);
+      // console.log(row);
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -457,7 +458,7 @@ export default {
     },
     // 该题目加入精选,暂无接口
     async addChoice(row) {
-      console.log(row);
+      // console.log(row);
 
       this.$confirm("请确认是否加入精选题库?", "提示", {
         confirmButtonText: "确定",
@@ -531,5 +532,10 @@ export default {
 
 .el-button--success {
   width: 32px;
+}
+.el-pagination__jump {
+  .el-input__inner {
+    width: 50px;
+  }
 }
 </style>
