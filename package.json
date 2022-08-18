@@ -9,6 +9,7 @@
     "fix": "vue-cli-service lint format"
   },
   "dependencies": {
+    "@xmldom/xmldom": "^0.8.2",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "cos-js-sdk-v5": "^1.4.0",
