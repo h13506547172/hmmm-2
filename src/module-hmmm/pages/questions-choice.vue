@@ -379,7 +379,6 @@ export default {
         chkState: 0,
       });
       this.total1 = res.data.counts;
-
       this.tableDataAwait = res.data.items;
     },
     // 1.3获取初始化的列表--已审核
@@ -390,7 +389,6 @@ export default {
         chkState: 1,
       });
       this.total2 = res.data.counts;
-
       this.tableDataDone = res.data.items;
     }, //1.4 获取初始化的列表--已拒绝
     async choice4() {
@@ -400,7 +398,6 @@ export default {
         chkState: 2,
       });
       this.total3 = res.data.counts;
-
       this.tableDataRejected = res.data.items;
     },
 
