@@ -4,7 +4,7 @@
       <el-col>
         <el-input
           v-model="username"
-          placeholder="根据用户名搜索"
+          placeholder="根据用户名搜索--刘爱莹"
           style="width: 200px"
         ></el-input>
         <el-button style="margin-left: 15px" @click="username = ''"

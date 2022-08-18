@@ -160,6 +160,20 @@ export function toThousandslsFilter(num) {
     .toString()
     .replace(/^-?\d+/g, (m) => m.replace(/(?=(?!\b)(\d{3})+$)/g, ","));
 }
+
+//可以把TZ的时间格式转化为正常日期【杨博】
+export function formatTimeFromMia(val) {
+  return dayjs(val).format("YYYY-MM-DD");
+}
+// 显示小时
+export function formatTime11(val) {
+  return dayjs(val).format("YYYY-MM-DD HH:mm:ss");
+}
+
+export function formatTimeFromMia2(val) {
+  return dayjs(val).format("YYYY-MM-DD hh:mm:ss");
+}
+
 // 新增过滤器--日期
 export function doneTime(val) {
   return dayjs(val).format("YYYY-MM-DD HH:mm:ss");
