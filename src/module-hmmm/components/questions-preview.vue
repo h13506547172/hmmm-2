@@ -39,30 +39,20 @@
       <!-- 单选题 -->
       <div v-if="detailDialogList.questionType == 1">
         <div class="lh">单选题 选项：（以下选中的选项为正确答案）</div>
-        <el-radio-group>
-          <el-radio
-            :vlaue="item.isRight"
-            :label="1"
-            v-for="item in detailDialogList.options"
-            :key="item.id"
-          >
+        <div v-for="item in detailDialogList.options" :key="item.id">
+          <el-radio :value="item.isRight" :label="1">
             {{ item.title || "无" }}</el-radio
           >
-        </el-radio-group>
+        </div>
       </div>
 
       <div v-if="detailDialogList.questionType == 2">
         <div class="lh">多选题 选项：（以下选中的选项为正确答案）</div>
-        <el-checkbox-group v-model="checkbox">
-          <el-checkbox
-            :vlaue="item.isRight"
-            :label="1"
-            v-for="item in detailDialogList.options"
-            :key="item.id"
-          >
+        <div v-for="item in detailDialogList.options" :key="item.id">
+          <el-checkbox :value="item.isRight" :label="1">
             {{ item.title || "无" }}</el-checkbox
           >
-        </el-checkbox-group>
+        </div>
       </div>
 
       <div class="lh" v-if="detailDialogList.questionType == 3">
@@ -118,8 +108,8 @@ export default {
       showVideo: false,
       form: {},
       showVideo: false,
-      radio: "",
-      checkbox: [],
+      // radio: "",
+      // checkbox: [],
     };
   },
   computed: {
