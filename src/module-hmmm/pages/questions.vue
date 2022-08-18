@@ -458,7 +458,7 @@ export default {
     },
     // 该题目加入精选,暂无接口
     async addChoice(row) {
-      console.log(row);
+      // console.log(row);
 
       this.$confirm("请确认是否加入精选题库?", "提示", {
         confirmButtonText: "确定",
