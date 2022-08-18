@@ -55,7 +55,12 @@
           ><div class="grid-content bg-purple">
             <el-form-item label="标签">
               <el-select v-model="form.tag" placeholder="请选择">
-                <el-option label="区域一" value="shanghai"></el-option>
+                <el-option
+                  :label="item.label"
+                  :value="item.value"
+                  v-for="item in tagsSimpleList"
+                  :key="item.id"
+                ></el-option>
               </el-select>
             </el-form-item></div
         ></el-col>
@@ -107,7 +112,12 @@
           ><div class="grid-content bg-purple">
             <el-form-item label="录入人">
               <el-select v-model="form.people" placeholder="请选择">
-                <el-option label="区域一" value="shanghai"></el-option>
+                <el-option
+                  :label="item.username"
+                  :value="item.id"
+                  v-for="item in userSimpleList"
+                  :key="item.id"
+                ></el-option>
               </el-select>
             </el-form-item></div
         ></el-col>
@@ -182,28 +192,30 @@
     </el-alert>
     <!--第三部分  -->
     <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="number" label="试题编号" width="120">
+      <el-table-column prop="number" label="试题编号"> </el-table-column>
+      <el-table-column prop="subject" label="学科"> </el-table-column>
+      <el-table-column prop="catalog" label="目录"> </el-table-column>
+      <el-table-column prop="questionType" label="题型">
+        <template slot-scope="scope">
+          {{ scope.row.questionType | questionTypeFilter }}
+        </template>
       </el-table-column>
-      <el-table-column prop="subject" label="学科" width="80">
-      </el-table-column>
-      <el-table-column prop="catalog" label="目录" width="80">
-      </el-table-column>
-      <el-table-column prop="questionType" label="题型" width="80">
-      </el-table-column>
-      <el-table-column prop="question" label="题干" width="260">
+      <el-table-column prop="question" label="题干">
         <template slot-scope="scope">
           <div v-html="scope.row.question"></div>
         </template>
       </el-table-column>
-      <el-table-column prop="addDate" label="录入时间" width="180">
+      <el-table-column prop="addDate" label="录入时间">
         <template slot-scope="scope">
           {{ scope.row.addDate | doneTime }}
         </template>
       </el-table-column>
-      <el-table-column prop="difficulty" label="难度" width="80">
+      <el-table-column prop="difficulty" label="难度">
+        <template slot-scope="scope">
+          {{ scope.row.difficulty | difficultyFilter }}
+        </template>
       </el-table-column>
-      <el-table-column prop="creator" label="录入人" width="80">
-      </el-table-column>
+      <el-table-column prop="creator" label="录入人"> </el-table-column>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <!-- 预览 -->
@@ -212,7 +224,7 @@
             plain
             circle
             icon="el-icon-view"
-            @click="questionsPreview"
+            @click="questionsPreview(scope.row.id)"
           ></el-button>
           <el-button
             type="success"
@@ -226,32 +238,48 @@
             plain
             circle
             icon="el-icon-delete"
+            @click="onRemove(scope.row)"
           ></el-button>
           <el-button
             type="warning"
             plain
             circle
             icon="el-icon-check"
+            @click="addChoice(scope.row)"
           ></el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
+    <pageTool
+      :paginationPage="pageChange"
+      :paginationPagesize="pageSizeChange"
+      :total="total"
+      @pageChange="pageChange"
+      @pageSizeChange="pageSizeChange"
+    ></pageTool>
     <!-- 弹框预览 -->
     <questionsPreview
       :visible.sync="questionsPreviewDialogVisible"
+      :detailDialogList="detailDialogList"
     ></questionsPreview>
   </el-card>
 </template>
 
 <script>
-import { list } from "@/api/hmmm/questions";
+import { list, remove, choiceAdd, detail } from "@/api/hmmm/questions";
 import { provinces, citys } from "@/api/hmmm/citys";
-
 import { simple } from "@/api/hmmm/subjects";
 import { simple as directorysSimple } from "@/api/hmmm/directorys";
+import { simple as userSimple } from "@/api/base/users";
+import { simple as tagsSimple } from "@/api/hmmm/tags";
 // 弹框对话框
 import questionsPreview from "../components/questions-preview";
+// 映射表
+// import question from "@/constant/question";
+// const { difficulty, questionType } = question;
+// 分页
+import pageTool from "@/module-manage/components/page-tool.vue";
 export default {
   data() {
     return {
@@ -271,32 +299,53 @@ export default {
         cityone: "",
         citytwo: "",
       },
-      page: 1,
-      pagesize: 5,
+
       // 初始化列表
       tableData: [],
-      total: 0,
+
       provinces: provinces(),
       // 市级列表
       citysList: [],
       subjectList: [],
       // 二级目录列表
       categoryList: [],
-      questionsPreviewDialogVisible: true,
+      questionsPreviewDialogVisible: false,
+      // 录入人
+      userSimpleList: [],
+      // 标签
+      tagsSimpleList: [],
+      // 分页
+      total: 0,
+      pagesize: 5,
+      page: 1,
+      detailDialogList: {},
     };
   },
   created() {
     this.list();
     this.simpleSubjectList();
+    this.userSimple();
   },
+  //  questionType(row, column, cellValue, index) {
+  //     if (cellValue === 1) return "单选";
+  //     if (cellValue === 2) return "多选";
+  //     if (cellValue === 3) return "简答";
+  //   },
+  //   difficulty(row, column, cellValue, index) {
+  //     if (cellValue === 1) return "简单";
+  //     if (cellValue === 2) return "一般";
+  //     if (cellValue === 3) return "困难";
+  //   },
+
   // 2022-08-15 21:20:58
   components: {
     questionsPreview,
+    pageTool,
   },
   methods: {
-    // 获取初始化的代码
+    // 获取初始化的列表
     async list() {
-      const res = await list();
+      const res = await list({ page: this.page, pagesize: this.pagesize });
       this.total = res.data.counts;
       this.tableData = res.data.items;
     },
@@ -306,12 +355,18 @@ export default {
       this.subjectList = res.data;
       // console.log(res.data);
     },
-    //二级目录
+    //二级目录 以及 标签列表，依据科目获取subjectID
     async chioceSubject(subject) {
+      // 二级目录列表
       // console.log(subject); //id
       const res = await directorysSimple({ subjectID: subject });
       // console.log(res);
       this.categoryList = res.data;
+
+      //标签列表
+      const res1 = await tagsSimple({ subjectID: subject });
+      console.log(res1);
+      this.tagsSimpleList = res1.data;
     },
 
     //城市列表，市级的铺设
@@ -319,6 +374,13 @@ export default {
       // console.log(provinces);
       this.citysList = citys(provinces);
     },
+    // 录入人列表
+    async userSimple() {
+      const res = await userSimple();
+      console.log(res);
+      this.userSimpleList = res.data;
+    },
+
     // 清除按钮
     removeSearch() {
       this.form = {
@@ -363,8 +425,70 @@ export default {
       });
     },
     // 预览对话框
-    questionsPreview() {
+    async questionsPreview(id) {
       this.questionsPreviewDialogVisible = true;
+      const res = await detail({ id: id });
+      console.log(res);
+      this.detailDialogList = res.data;
+    },
+
+    // 基础题库删除
+    async onRemove(row) {
+      console.log(row);
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          await remove(row);
+          this.list();
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    // 该题目加入精选,暂无接口
+    async addChoice(row) {
+      console.log(row);
+
+      this.$confirm("请确认是否加入精选题库?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          await choiceAdd({ choiceState: 1, id: row.id });
+          this.list();
+          this.$message({
+            type: "success",
+            message: "已添加成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消添加",
+          });
+        });
+    },
+
+    // 分页
+    pageChange(val) {
+      // console.log(`当前页: ${val}`);
+      this.page = val;
+      this.list();
+    },
+    pageSizeChange(val) {
+      this.pagesize = val;
+      this.list();
     },
   },
 };

@@ -111,7 +111,7 @@ export default {
       currentPage: 1,
       tableData: [],
       total: 0,
-      pagesize: 10,
+      pagesize: 5,
       page: 1,
       //弹层显示按钮
       dialogShow: false,
@@ -159,6 +159,7 @@ export default {
           username: this.username,
         });
         this.tableData = res.data.list;
+        this.total = res.data.counts;
       } catch (e) {
         console.log(e);
       }

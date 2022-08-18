@@ -2,31 +2,31 @@ export default {
   //难度
   difficulty: [
     {
-      id: "1",
-      value: "简单",
+      value: 1,
+      label: "简单",
     },
     {
-      id: "2",
-      value: "一般",
+      value: 2,
+      label: "一般",
     },
     {
-      id: "3",
-      value: "困难",
+      value: 3,
+      label: "困难",
     },
   ],
   //题型
   questionType: [
     {
-      id: "1",
-      value: "单选",
+      value: 1,
+      label: "单选",
     },
     {
-      id: "2",
-      value: "多选",
+      value: 2,
+      label: "多选",
     },
     {
-      id: "3",
-      value: "简答",
+      value: 3,
+      label: "简答",
     },
   ],
 };

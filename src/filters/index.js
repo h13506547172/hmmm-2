@@ -160,7 +160,23 @@ export function toThousandslsFilter(num) {
     .toString()
     .replace(/^-?\d+/g, (m) => m.replace(/(?=(?!\b)(\d{3})+$)/g, ","));
 }
-
+// 新增过滤器--日期
 export function doneTime(val) {
   return dayjs(val).format("YYYY-MM-DD HH:mm:ss");
+}
+export function questionTypeFilter(val) {
+  if (val == 1) {
+    return "单选";
+  } else if (val == 2) {
+    return "多选";
+  } else if (val == 3) return "简答";
+}
+export function difficultyFilter(val) {
+  if (val == 1) {
+    return "简单";
+  } else if (val == 2) {
+    return "一般";
+  } else if (val == 3) {
+    return "困难";
+  }
 }

@@ -55,7 +55,12 @@
           ><div class="grid-content bg-purple">
             <el-form-item label="标签">
               <el-select v-model="form.tag" placeholder="请选择">
-                <el-option label="区域一" value="shanghai"></el-option>
+                <el-option
+                  :label="item.label"
+                  :value="item.value"
+                  v-for="item in tagsSimpleList"
+                  :key="item.id"
+                ></el-option>
               </el-select>
             </el-form-item></div
         ></el-col>
@@ -107,7 +112,12 @@
           ><div class="grid-content bg-purple">
             <el-form-item label="录入人">
               <el-select v-model="form.people" placeholder="请选择">
-                <el-option label="区域一" value="shanghai"></el-option>
+                <el-option
+                  :label="item.username"
+                  :value="item.id"
+                  v-for="item in userSimpleList"
+                  :key="item.id"
+                ></el-option>
               </el-select>
             </el-form-item></div
         ></el-col>
@@ -178,73 +188,102 @@
       style="margin-bottom: 20px"
       :closable="false"
     >
-      <template #title> 共 {{ total }}条记录 </template>
+      <template #title v-if="activeName == 'second'">
+        共 {{ total1 }}条记录
+      </template>
+      <template #title v-else-if="activeName == 'third'">
+        共 {{ total2 }}条记录
+      </template>
+      <template #title v-else-if="activeName == 'fourth'">
+        共 {{ total3 }}条记录
+      </template>
+      <template #title v-else> 共 {{ total }}条记录 </template>
     </el-alert>
     <!--第三部分  -->
-    <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="number" label="试题编号" width="120">
-      </el-table-column>
-      <el-table-column prop="subject" label="学科" width="80">
-      </el-table-column>
-      <el-table-column prop="catalog" label="目录" width="80">
-      </el-table-column>
-      <el-table-column prop="questionType" label="题型" width="80">
-      </el-table-column>
-      <el-table-column prop="question" label="题干" width="260">
-        <template slot-scope="scope">
-          <div v-html="scope.row.question"></div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="addDate" label="录入时间" width="180">
-        <template slot-scope="scope">
-          {{ scope.row.addDate | doneTime }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="difficulty" label="难度" width="80">
-      </el-table-column>
-      <el-table-column prop="creator" label="录入人" width="80">
-      </el-table-column>
-      <el-table-column label="操作" width="200">
-        <template slot-scope="scope">
-          <el-button
-            type="primary"
-            plain
-            circle
-            icon="el-icon-edit"
-          ></el-button>
-          <el-button
-            type="success"
-            plain
-            circle
-            icon="el-icon-edit"
-            @click="revise(scope.row.id)"
-          ></el-button>
-          <el-button
-            type="danger"
-            plain
-            circle
-            icon="el-icon-delete"
-          ></el-button>
-          <el-button
-            type="warning"
-            plain
-            circle
-            icon="el-icon-edit"
-          ></el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <!-- 全部 -->
+      <el-tab-pane label="全部" name="first">
+        <questionChoiceTable
+          @onSuccess="choice1"
+          :tableData="tableDataAll"
+        ></questionChoiceTable>
+      </el-tab-pane>
+
+      <!-- 待审核 -->
+      <el-tab-pane label="待审核" name="second">
+        <questionChoiceTable
+          @onSuccess="choice2"
+          :tableData="tableDataAwait"
+        ></questionChoiceTable>
+      </el-tab-pane>
+
+      <!-- 已审核 -->
+      <el-tab-pane label="已审核" name="third">
+        <questionChoiceTable
+          @onSuccess="choice3"
+          :tableData="tableDataDone"
+        ></questionChoiceTable>
+      </el-tab-pane>
+
+      <!-- 已拒绝 -->
+      <el-tab-pane label="已拒绝" name="fourth">
+        <questionChoiceTable
+          @onSuccess="choice4"
+          :tableData="tableDataRejected"
+        ></questionChoiceTable>
+      </el-tab-pane>
+    </el-tabs>
+
     <!-- 分页 -->
+    <pageTool
+      v-if="activeName == 'first'"
+      :paginationPage="pageChange"
+      :paginationPagesize="pageSizeChange"
+      :total="total"
+      @pageChange="pageChange"
+      @pageSizeChange="pageSizeChange"
+    ></pageTool>
+    <pageTool
+      v-if="activeName == 'second'"
+      :paginationPage="pageChange"
+      :paginationPagesize="pageSizeChange"
+      :total="total1"
+      @pageChange="pageChange"
+      @pageSizeChange="pageSizeChange"
+    ></pageTool>
+    <pageTool
+      v-if="activeName == 'third'"
+      :paginationPage="pageChange"
+      :paginationPagesize="pageSizeChange"
+      :total="total2"
+      @pageChange="pageChange"
+      @pageSizeChange="pageSizeChange"
+    ></pageTool>
+    <pageTool
+      v-if="activeName == 'fourth'"
+      :paginationPage="pageChange"
+      :paginationPagesize="pageSizeChange"
+      :total="total3"
+      @pageChange="pageChange"
+      @pageSizeChange="pageSizeChange"
+    ></pageTool>
   </el-card>
 </template>
 
 <script>
-import { list } from "@/api/hmmm/questions";
+import { choice } from "@/api/hmmm/questions";
 import { provinces, citys } from "@/api/hmmm/citys";
-
 import { simple } from "@/api/hmmm/subjects";
 import { simple as directorysSimple } from "@/api/hmmm/directorys";
+import { simple as userSimple } from "@/api/base/users";
+import { simple as tagsSimple } from "@/api/hmmm/tags";
 
+// 分页
+import pageTool from "@/module-manage/components/page-tool.vue";
+
+// 组件table
+
+import questionChoiceTable from "../components/questionChoiceTable.vue";
 export default {
   data() {
     return {
@@ -264,44 +303,125 @@ export default {
         cityone: "",
         citytwo: "",
       },
-      page: 1,
-      pagesize: 5,
-      // 初始化列表
-      tableData: [],
-      total: 0,
+
+      // 初始化列表--全部
+      tableDataAll: [],
+      // 初始化列表--待审核
+      tableDataAwait: [],
+      // 初始化列表  -已审核
+      tableDataDone: [],
+      // 初始化列表  -已拒绝
+      tableDataRejected: [],
+
       provinces: provinces(),
       // 市级列表
       citysList: [],
       subjectList: [],
       // 二级目录列表
       categoryList: [],
+
+      // 录入人
+      userSimpleList: [],
+      // 标签
+      tagsSimpleList: [],
+      // 分页
+      total: 0,
+      total1: 0,
+      total2: 0,
+      total3: 0,
+      pagesize: 5,
+      page: 1,
+      detailDialogList: {},
+      // tab
+      activeName: "first",
     };
   },
   created() {
-    this.list();
+    this.choice1();
+    this.choice2();
+    this.choice3();
+    this.choice4();
     this.simpleSubjectList();
+    this.userSimple();
   },
+  //  questionType(row, column, cellValue, index) {
+  //     if (cellValue === 1) return "单选";
+  //     if (cellValue === 2) return "多选";
+  //     if (cellValue === 3) return "简答";
+  //   },
+  //   difficulty(row, column, cellValue, index) {
+  //     if (cellValue === 1) return "简单";
+  //     if (cellValue === 2) return "一般";
+  //     if (cellValue === 3) return "困难";
+  //   },
+
   // 2022-08-15 21:20:58
+  components: {
+    // questionsPreview,
+    pageTool,
+    questionChoiceTable,
+  },
 
   methods: {
-    // 获取初始化的代码
-    async list() {
-      const res = await list();
+    // 1.1获取初始化的列表--全部
+    async choice1() {
+      const res = await choice({ page: this.page, pagesize: this.pagesize });
       this.total = res.data.counts;
-      this.tableData = res.data.items;
+      this.tableDataAll = res.data.items;
+      console.log(res);
     },
+    //1.2 获取初始化的列表--待审核
+    async choice2() {
+      const res = await choice({
+        page: this.page,
+        pagesize: this.pagesize,
+        chkState: 0,
+      });
+      this.total1 = res.data.counts;
+
+      this.tableDataAwait = res.data.items;
+    },
+    // 1.3获取初始化的列表--已审核
+    async choice3() {
+      const res = await choice({
+        page: this.page,
+        pagesize: this.pagesize,
+        chkState: 1,
+      });
+      this.total2 = res.data.counts;
+
+      this.tableDataDone = res.data.items;
+    }, //1.4 获取初始化的列表--已拒绝
+    async choice4() {
+      const res = await choice({
+        page: this.page,
+        pagesize: this.pagesize,
+        chkState: 2,
+      });
+      this.total3 = res.data.counts;
+
+      this.tableDataRejected = res.data.items;
+    },
+
     // 初始化一级目录
     async simpleSubjectList() {
       const res = await simple();
       this.subjectList = res.data;
       // console.log(res.data);
     },
-    //二级目录
+
+    //二级目录 以及 标签列表，依据科目获取subjectID
     async chioceSubject(subject) {
+      // 二级目录列表
       // console.log(subject); //id
       const res = await directorysSimple({ subjectID: subject });
       // console.log(res);
       this.categoryList = res.data;
+
+      //标签列表
+      const res1 = await tagsSimple({ subjectID: subject });
+      console.log(res1);
+      this.tagsSimpleList = res1.data;
     },
 
     //城市列表，市级的铺设
@@ -309,6 +429,13 @@ export default {
       // console.log(provinces);
       this.citysList = citys(provinces);
     },
+
+    // 录入人列表
+    async userSimple() {
+      const res = await userSimple();
+      this.userSimpleList = res.data;
+    },
+
     // 清除按钮
     removeSearch() {
       this.form = {
@@ -330,25 +457,39 @@ export default {
     },
     // 搜索按钮
     async searchList() {
-      const res = await list({
+      const res = await choice({
         subjectID: this.form.subject || "",
         keyword: this.form.keywords || "",
+        difficulty: this.form.difficulty || "",
+        questionType: this.form.type || "",
         page: this.page,
         pagesize: this.pagesize,
       });
       console.log(res);
       this.total = res.data.counts;
-      this.tableData = res.data.items;
+      this.tableDataAll = res.data.items;
     },
-    // 点击修改按钮
-    revise(id) {
-      console.log(id);
-      this.$router.push({
-        path: "/questions/new",
-        query: {
-          id,
-        },
-      });
+
+    // 分页
+    pageChange(val) {
+      // console.log(`当前页: ${val}`);
+      this.page = val;
+      this.choice1();
+      this.choice2();
+      this.choice3();
+      this.choice4();
+    },
+    pageSizeChange(val) {
+      this.pagesize = val;
+      this.choice1();
+      this.choice2();
+      this.choice3();
+      this.choice4();
+    },
+
+    // tab
+    handleClick(tab, event) {
+      this.activeName = tab.name;
     },
   },
 };
@@ -391,5 +532,10 @@ export default {
 
 .el-button--success {
   width: 32px;
+}
+// 没起作用
+.operate span {
+  font-size: 12px;
+  color: #409eff;
 }
 </style>

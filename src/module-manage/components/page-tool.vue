@@ -7,7 +7,7 @@
       :current-page="Number(paginationPage)"
       :total="Number(total)"
       :page-size="Number(paginationPagesize)"
-      :page-sizes="[10, 20, 30, 50]"
+      :page-sizes="[5, 10, 20, 30, 50]"
       layout=" prev, pager, next,sizes, jumper"
       style="margin-top: 15px"
     >
@@ -33,12 +33,20 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="less" scoped>
 .blue {
   color: #409eff;
 }
 .pages {
   display: flex;
   justify-content: end;
+  /deep/ .el-input__inner {
+    width: 100px;
+  }
+}
+/deep/.el-pagination__jump {
+  /deep/ .el-input__inner {
+    width: 50px;
+  }
 }
 </style>
