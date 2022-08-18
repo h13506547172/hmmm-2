@@ -44,9 +44,10 @@ export default {
     width: 100px;
   }
 }
-// /deep/.el-pagination__jump {
-//   /deep/ .el-input__inner {
-//     width: 50px;
-//   }
-// }
+/deep/.el-pagination__jump {
+  margin-left: 0;
+  .el-input__inner {
+    width: 50px;
+  }
+}
 </style>
