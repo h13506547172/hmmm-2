@@ -107,39 +107,27 @@
       <!-- 对话框 -->
       <el-dialog
         title="新增文章"
-        width="30%"
+        width="50%"
         :visible.sync="dialogVisible"
         @close="onClose"
       >
         <el-form :model="form" :rules="rules" ref="form">
-          <el-form-item label="文章标题" prop="subjectID">
+          <el-form-item label="文章标题" prop="articleBody">
             <el-input
-              style="width: 300px"
+              style="width: 90%"
               placeholder="请输入视频地址"
-              v-model="form.subjectID"
+              v-model="form.articleBody"
               autocomplete="off"
             ></el-input>
           </el-form-item>
-          <el-form-item label="所属学科" prop="subjectID">
-            <el-select
-              v-model="form.subjectID"
-              style="width: 300px"
-              placeholder="请选择学科"
-              @click.native="choiceFn"
-            >
-              <el-option
-                v-for="item in subject"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
+          <el-form-item label="所属学科">
+            <NewText :text.sync="form.title"></NewText>
           </el-form-item>
           <el-form-item label="视频地址">
             <el-input
-              style="width: 300px"
+              style="width: 90%"
               placeholder="请输入视频地址"
-              v-model="form.directoryName"
+              v-model="form.videoURL"
               autocomplete="off"
             ></el-input>
           </el-form-item>
@@ -154,9 +142,9 @@
     <el-dialog title="提示" :visible.sync="dialogV" width="40%">
       <h3 v-html="preview.articleBody"></h3>
       <span> {{ preview.createTime | parseTimeByString }} </span>
-      <span> {{ preview.username }}  </span>
+      <span> {{ preview.username }} </span>
       <i class="el-icon-view"></i><span> {{ preview.visits }} </span>
-      <p>{{preview.videoURL}}</p>
+      <p>{{ preview.videoURL }}</p>
     </el-dialog>
   </div>
 </template>
@@ -170,6 +158,7 @@ import {
   remove,
 } from "../../api/hmmm/articles";
 import { simple } from "../../api/hmmm/subjects";
+import NewText from "../components/newText.vue";
 export default {
   data() {
     return {
@@ -182,8 +171,10 @@ export default {
       switchS: "",
       preview: {},
       form: {
-        subjectID: "",
-        directoryName: "",
+        articleBody: "",
+        id: "",
+        videoURL: "",
+        title: "",
       },
       options: [
         {
@@ -201,8 +192,7 @@ export default {
       tableData: [],
       currentPage1: 1,
       rules: {
-        subjectID: [{ required: true, message: "请选择", trigger: "blur" }],
-        directoryName: [{ required: true, message: "请输入", trigger: "blur" }],
+        articleBody: [{ required: true, message: "请输入", trigger: "blur" }],
       },
     };
   },
@@ -255,8 +245,9 @@ export default {
     },
     // 修改
     modifyFn(row) {
-      this.form.subjectID = row.subjectName;
-      this.form.directoryName = row.directoryName;
+      this.form.articleBody = row.articleBody;
+      this.form.videoURL = row.videoURL;
+      this.form.title = row.title;
       console.log(row.id);
       this.form.id = row.id;
       // this.id= row.subjectID
@@ -272,9 +263,10 @@ export default {
       this.dialogVisible = false;
       if (this.form.id) {
         await update({
+          articleBody: this.form.title,
           id: this.form.id,
-          subjectID: this.form.subjectID,
-          directoryName: this.form.directoryName,
+          title: this.form.articleBody,
+          videoURL: this.form.videoURL,
         });
       } else {
         await add(this.form);
@@ -283,8 +275,10 @@ export default {
     },
     onClose() {
       this.form = {
-        subjectID: "",
-        directoryName: "",
+        articleBody: "",
+        videoURL: "",
+        id: "",
+        title: "",
       };
     },
     // 删除
@@ -316,6 +310,9 @@ export default {
       this.preview = row;
     },
   },
+  components: {
+    NewText,
+  },
 };
 </script>
 
@@ -342,4 +339,7 @@ export default {
 .btnmodify {
   color: #409eff;
 }
+// .el-form-item__label{
+//   font: 1em sans-serif;
+// }
 </style>
