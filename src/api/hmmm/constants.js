@@ -11,86 +11,86 @@
 export const status = [
   {
     value: 1,
-    label: '启用'
+    label: "启用",
   },
   {
     value: 0,
-    label: '禁用'
-  }
-]
+    label: "禁用",
+  },
+];
 
 // 难度
 export const difficulty = [
   {
     value: 1,
-    label: '简单'
+    label: "简单",
   },
   {
     value: 2,
-    label: '一般'
+    label: "一般",
   },
   {
     value: 3,
-    label: '困难'
-  }
-]
+    label: "困难",
+  },
+];
 
 // 题型
 export const questionType = [
   {
     value: 1,
-    label: '单选'
+    label: "单选",
   },
   {
     value: 2,
-    label: '多选'
+    label: "多选",
   },
   {
     value: 3,
-    label: '简答'
-  }
-]
+    label: "简答",
+  },
+];
 
 // 方向
 export const direction = [
-  'o2o',
-  '外包服务',
-  '企业服务',
-  '互联网金融',
-  '企业咨询',
-  '互联网',
-  '电子商务',
-  '其他'
-]
+  "o2o",
+  "外包服务",
+  "企业服务",
+  "互联网金融",
+  "企业咨询",
+  "互联网",
+  "电子商务",
+  "其他",
+];
 
 // 精品审核
 export const chkType = [
   {
     value: 1,
-    label: '待审核'
+    label: "已审核",
+  },
+  {
+    value: 0,
+    label: "待审核",
   },
   {
     value: 2,
-    label: '通过'
+    label: "已拒绝",
   },
-  {
-    value: 3,
-    label: '拒绝'
-  }
-]
+];
 
 // 发布状态
 export const publishType = [
   {
     value: 1,
-    label: '待发布'
+    label: "待发布",
   },
   {
     value: 2,
-    label: '已发布'
+    label: "已发布",
   },
   {
     value: 3,
-    label: '已下架'
-  }
-]
+    label: "已下架",
+  },
+];
