@@ -11,6 +11,7 @@
       <el-col>
         <el-row type="flex" justify="end">
           <el-button
+            style="width: 100px"
             type="success"
             icon="el-icon-edit"
             @click="$router.push('/questions/new')"
