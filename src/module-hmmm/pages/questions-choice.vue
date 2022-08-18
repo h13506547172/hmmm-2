@@ -2,12 +2,13 @@
   <el-card class="box-card">
     <el-row type="flex" style="margin-bottom: 15px">
       <el-col>
-        <el-alert title="说明：目前支持学科和关键字条件筛选" type="success">
+        <el-alert title="说明：目前支持各条件筛选---刘爱莹制作" type="success">
         </el-alert
       ></el-col>
       <el-col>
         <el-row type="flex" justify="end">
           <el-button
+            style="width: 100px"
             type="success"
             icon="el-icon-edit"
             @click="$router.push('/questions/new')"
@@ -420,7 +421,7 @@ export default {
 
       //标签列表
       const res1 = await tagsSimple({ subjectID: subject });
-      console.log(res1);
+      // console.log(res1);
       this.tagsSimpleList = res1.data;
     },
 
@@ -465,7 +466,7 @@ export default {
         page: this.page,
         pagesize: this.pagesize,
       });
-      console.log(res);
+      // console.log(res);
       this.total = res.data.counts;
       this.tableDataAll = res.data.items;
     },
