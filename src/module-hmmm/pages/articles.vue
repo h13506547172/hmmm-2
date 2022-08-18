@@ -37,10 +37,7 @@
       <!-- 表格 -->
       <el-table :data="tableData" style="width: 100%">
         <el-table-column label="序号" width="60" type="index"></el-table-column>
-        <el-table-column prop="articleBody" label="文章标题">
-          <template slot-scope="{ row }">
-            <div v-html="row.articleBody"></div>
-          </template>
+        <el-table-column prop="title" label="文章标题">
         </el-table-column>
         <el-table-column prop="visits" label="阅读数"></el-table-column>
         <el-table-column prop="username" label="录入人"> </el-table-column>
