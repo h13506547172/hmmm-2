@@ -245,6 +245,11 @@ export default {
       const res = await getSubjectDetail({ id: 21 });
       // console.log(res);
       this.formData = res.data;
+      if (this.formData.tags) {
+        this.formData.tags = this.formData.tags.split(',')
+      }else {
+        this.formData.tags = []
+      }
     }
   },
   methods: {
@@ -285,15 +290,18 @@ export default {
     // 确认提交事件
     async confirmFn() {
       await this.$refs.form.validate();
-      // console.log(this.formData);
-      this.formData.tags = this.formData.tags.join(",");
+      if (Array.isArray(this.formData.tags)) {
+        console.log(11);
+        this.formData.tags = this.formData.tags.join(",");
+      }
+
       await addQuestionAPI(this.formData);
       if (this.$route.query.id) {
         this.$router.back();
       } else {
         this.$router.push("/questions/list");
       }
-      this.$messages.success("添加题目成功");
+      this.$message.success("添加题目成功");
     },
   },
   watch: {
