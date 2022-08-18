@@ -142,7 +142,13 @@
 </template>
 
 <script>
-import { list, add, changeState,update,remove } from "../../api/hmmm/directorys";
+import {
+  list,
+  add,
+  changeState,
+  update,
+  remove,
+} from "../../api/hmmm/directorys";
 import { simple } from "../../api/hmmm/subjects";
 export default {
   data() {
@@ -167,7 +173,7 @@ export default {
           label: "禁用",
         },
       ],
-      id:'',
+      id: "",
       value: "",
       input: "",
       tableData: [],
@@ -179,7 +185,14 @@ export default {
     };
   },
   created() {
-    this.getCatalogdetails();
+    if (this.$route.query.id) {
+      this.getCatalogdetails({
+        id: this.$route.query.id,
+        name: this.$route.query.name,
+      });
+    } else {
+      this.getCatalogdetails();
+    }
   },
   methods: {
     // 请求列表数据
@@ -229,7 +242,7 @@ export default {
       this.form.subjectID = row.subjectName;
       this.form.directoryName = row.directoryName;
       console.log(row.id);
-      this.form.id = row.id
+      this.form.id = row.id;
       // this.id= row.subjectID
       this.dialogVisible = true;
     },
@@ -241,10 +254,14 @@ export default {
     async determineFn() {
       await this.$refs.form.validate();
       this.dialogVisible = false;
-      if(this.form.id){
-      await update({id:this.form.id,subjectID:this.form.subjectID,directoryName:this.form.directoryName})
-      }else{
-      await add(this.form);
+      if (this.form.id) {
+        await update({
+          id: this.form.id,
+          subjectID: this.form.subjectID,
+          directoryName: this.form.directoryName,
+        });
+      } else {
+        await add(this.form);
       }
       this.getCatalogdetails();
     },
@@ -255,9 +272,9 @@ export default {
       };
     },
     // 删除
-   async removeFn(row){
-      await remove(row)
-       this.getCatalogdetails();
+    async removeFn(row) {
+      await remove(row);
+      this.getCatalogdetails();
     },
     async choiceFn() {
       console.log(111);

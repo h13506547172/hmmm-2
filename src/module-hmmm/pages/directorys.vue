@@ -179,7 +179,14 @@ export default {
     };
   },
   created() {
-    this.getCatalogdetails();
+    if (this.$route.query.id) {
+      this.getCatalogdetails({
+        id: this.$route.query.id,
+        name: this.$route.query.name,
+      });
+    } else {
+      this.getCatalogdetails();
+    }
   },
   methods: {
     // 请求列表数据
@@ -204,8 +211,6 @@ export default {
     },
     // 搜索
     async searchFn() {
-      console.log(this.input);
-      console.log(this.value);
       const res = await list({
         directoryName: this.input,
         state: this.value,
