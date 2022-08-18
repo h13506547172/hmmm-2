@@ -2,10 +2,7 @@
   <el-card class="box-card">
     <el-row type="flex" style="margin-bottom: 15px">
       <el-col>
-        <el-alert
-          title="说明：目前支持学科和关键字条件筛选---刘爱莹制作"
-          type="success"
-        >
+        <el-alert title="说明：目前支持各条件筛选---刘爱莹制作" type="success">
         </el-alert
       ></el-col>
       <el-col>
