@@ -41,7 +41,8 @@
         <div class="lh">单选题 选项：（以下选中的选项为正确答案）</div>
         <el-radio-group v-model="radio">
           <el-radio
-            :label="item.id"
+            :vlaue="item.isRight"
+            :label="1"
             v-for="item in detailDialogList.options"
             :key="item.id"
           >
@@ -54,7 +55,8 @@
         <div class="lh">多选题 选项：（以下选中的选项为正确答案）</div>
         <el-checkbox-group v-model="checkbox">
           <el-checkbox
-            :label="item.id"
+            :vlaue="item.isRight"
+            :label="1"
             v-for="item in detailDialogList.options"
             :key="item.id"
           >
