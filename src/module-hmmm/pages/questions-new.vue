@@ -128,6 +128,7 @@
               multiple
               filterable
               allow-create
+              default-first-option
               v-model="formData.tags"
               placeholder="请选择"
             >
