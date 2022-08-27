@@ -105,7 +105,7 @@
         title="提示"
         width="30%"
         :visible.sync="dialogVisible"
-        @close="onClose"
+
       >
         <el-form :model="form" :rules="rules" ref="form">
           <el-form-item label="所属学科" prop="subjectID">
