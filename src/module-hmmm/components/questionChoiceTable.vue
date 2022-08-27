@@ -62,6 +62,7 @@
             @click="revise(scope.row.id)"
             >修改
           </span>
+
           <span
             v-if="scope.row.publishState == 1"
             @click="stackingDialogClick(scope.row)"
@@ -75,21 +76,7 @@
             style="color: #409eff; font-size: 12px"
             >下架
           </span>
-          <!-- 上架 -->
-          <el-dialog title="提示" :visible.sync="stackingDialog" width="400px">
-            <span v-if="scope.row.publishState == 0"
-              >您确认下架这道题目吗?</span
-            >
-            <span v-else-if="scope.row.publishState == 1"
-              >您确认上架这道题目吗?</span
-            >
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="stackingDialog = false">取 消</el-button>
-              <el-button type="primary" @click="stackingDialogSave(scope.row)"
-                >确 定</el-button
-              >
-            </span>
-          </el-dialog>
+
           <span
             style="color: #409eff; font-size: 12px"
             @click="onRemove(scope.row)"
@@ -129,6 +116,27 @@
         <el-button type="primary" @click="reviewDialogSave">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 上架 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="stackingDialog"
+      width="400px"
+      style="z-index: 9999999"
+    >
+      <span v-if="publishStateItem.publishState == 0"
+        >您确认下架这道题目吗?</span
+      >
+      <span v-else-if="publishStateItem.publishState == 1"
+        >您确认上架这道题目吗?</span
+      >
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="stackingDialog = false">取 消</el-button>
+        <el-button type="primary" @click="stackingDialogSave()"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -152,6 +160,8 @@ export default {
       chkState: "1",
       //上架
       stackingDialog: false,
+      // 点击的行数据
+      publishStateItem: {},
     };
   },
   props: {
@@ -180,13 +190,13 @@ export default {
     async questionsPreview(id) {
       this.questionsPreviewDialogVisible = true;
       const res = await detail({ id: id });
-      console.log(res);
+      // console.log(res);
       this.detailDialogList = res.data;
     },
 
     // 精选题库删除与基础接口一致
     async onRemove(row) {
-      console.log(row);
+      // console.log(row);
       this.$confirm("此操作将永久删除该题目, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -253,18 +263,23 @@ export default {
 
     // 上架
     stackingDialogClick(row) {
-      console.log(row.publishState);
+      this.publishStateItem = row;
+
       this.stackingDialog = true;
     },
-    async stackingDialogSave(row) {
+
+    async stackingDialogSave() {
       this.stackingDialog = false;
       this.$emit("onSuccess");
-      await choicePublish(row);
-      if (row.publishState == 1) {
+      console.log(this.publishStateItem);
+      await choicePublish(this.publishStateItem);
+
+      if (this.publishStateItem.publishState == 1) {
         this.$message.success("上架成功");
       } else {
         this.$message.success("下架成功");
       }
+      this.$emit("onSuccess");
     },
   },
 };

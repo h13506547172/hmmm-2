@@ -75,7 +75,7 @@ import preview from "../components/preview.vue";
 import {
   randoms as getRandomsAPI,
   detail as getQuestionDetailAPI,
-  remove as removeQuestionAPI
+  remove as removeQuestionAPI,
 } from "@/api/hmmm/questions";
 export default {
   name: "questions-randoms",
@@ -158,9 +158,13 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       });
-      await removeQuestionAPI(row)
-      this.$message.success('删除成功')
-      await this.getRandoms()
+      await removeQuestionAPI(row);
+      this.$message.success("删除成功");
+      await this.getRandoms();
+      if (this.tableData.length <= 0 && this.page !== 1) {
+        this.page--;
+      }
+      await this.getRandoms();
     },
   },
 };

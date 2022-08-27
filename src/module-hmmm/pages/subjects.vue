@@ -148,7 +148,7 @@ export default {
         pagesize: this.pagesize,
         subjectName: this.form.subjectName,
       });
-      console.log(res);
+      // console.log(res);
       this.tableData = res.data.items;
       this.total = res.data.counts;
     },
@@ -221,6 +221,10 @@ export default {
       });
       await removeSubjectAPI(row);
       this.$message.success("删除成功");
+      await this.getSubjectList();
+      if (this.tableData.length <= 0 && this.page !== 1) {
+        this.page--;
+      }
       await this.getSubjectList();
     },
   },
