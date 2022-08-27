@@ -209,6 +209,9 @@ export default {
             type: "success",
             message: "删除成功!",
           });
+          if (this.tableData.length <= 0 && this.page !== 1) {
+            this.page--;
+          }
         })
         .catch(() => {
           this.$message({

@@ -349,6 +349,7 @@ export default {
       const res = await list({ page: this.page, pagesize: this.pagesize });
       this.total = res.data.counts;
       this.tableData = res.data.items;
+      console.log(this.tableData);
     },
     // 初始化一级目录
     async simpleSubjectList() {
@@ -408,6 +409,7 @@ export default {
         keyword: this.form.keywords || "",
         difficulty: this.form.difficulty || "",
         questionType: this.form.type || "",
+        creatorID: this.form.people || "",
         page: this.page,
         pagesize: this.pagesize,
       });
@@ -417,7 +419,7 @@ export default {
     },
     // 点击修改按钮
     revise(id) {
-      console.log(id);
+      // console.log(id);
       this.$router.push({
         path: "/questions/new",
         query: {
@@ -448,6 +450,9 @@ export default {
             type: "success",
             message: "删除成功!",
           });
+          if (this.tableData.length <= 0 && this.page !== 1) {
+            this.page--;
+          }
         })
         .catch(() => {
           this.$message({
