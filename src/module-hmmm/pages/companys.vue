@@ -798,7 +798,7 @@ export default {
   },
 
   created() {
-    this.$message.success("杨博制作，程序和我有一个能跑就行！");
+    // this.$message.success("杨博制作，程序和我有一个能跑就行！");
     //获取列表
     this.getlist();
   },
