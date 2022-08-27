@@ -445,7 +445,7 @@ export default {
       })
         .then(async () => {
           await remove(row);
-          this.list();
+          await this.list();
           this.$message({
             type: "success",
             message: "删除成功!",
@@ -453,6 +453,7 @@ export default {
           if (this.tableData.length <= 0 && this.page !== 1) {
             this.page--;
           }
+          await this.list();
         })
         .catch(() => {
           this.$message({

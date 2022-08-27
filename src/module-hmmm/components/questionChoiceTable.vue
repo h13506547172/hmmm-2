@@ -212,6 +212,7 @@ export default {
           if (this.tableData.length <= 0 && this.page !== 1) {
             this.page--;
           }
+          this.$emit("onSuccess");
         })
         .catch(() => {
           this.$message({
