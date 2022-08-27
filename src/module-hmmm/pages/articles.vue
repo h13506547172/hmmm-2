@@ -39,7 +39,7 @@
         <el-table-column label="序号" width="60" type="index"></el-table-column>
         <el-table-column prop="articleBody" label="文章标题">
           <template slot-scope="{ row }">
-            <div v-html="row.articleBody"></div>
+            <div v-html="row.title"></div>
           </template>
         </el-table-column>
         <el-table-column prop="visits" label="阅读数"></el-table-column>
@@ -139,7 +139,7 @@
       </el-dialog>
     </el-card>
     <!-- 预览框 -->
-    <el-dialog title="提示" :visible.sync="dialogV" width="40%">
+    <el-dialog title="提示" :visible.sync="dialogV" width="60%">
       <h3 v-html="preview.articleBody"></h3>
       <span> {{ preview.createTime | parseTimeByString }} </span>
       <span> {{ preview.username }} </span>

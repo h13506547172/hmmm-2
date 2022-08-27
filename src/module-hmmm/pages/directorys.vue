@@ -248,21 +248,26 @@ export default {
       this.dialogVisible = false;
       if(this.form.id){
       await update({id:this.form.id,subjectID:this.form.subjectID,directoryName:this.form.directoryName})
+       this.$message.success("修改成功")
       }else{
       await add(this.form);
+       this.$message.success("添加成功")
       }
       this.getCatalogdetails();
+      await this.$refs.form.resetFields();
+
     },
-    onClose() {
-      this.form = {
-        subjectID: "",
-        directoryName: "",
-      };
-    },
+    // onClose() {
+    //   this.form = {
+    //     subjectID: "",
+    //     directoryName: "",
+    //   };
+    // },
     // 删除
    async removeFn(row){
       await remove(row)
        this.getCatalogdetails();
+       this.$message.success("删除成功")
     },
     async choiceFn() {
       console.log(111);
@@ -280,6 +285,8 @@ export default {
         state,
       });
       this.getCatalogdetails();
+       this.$message.success("修改状态成功")
+
     },
   },
 };
